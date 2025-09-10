@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Delta Shop</title>
+    <title>Project Delta & Arena Breakout Shop</title>
     <style>
         body {
             background-color: #2a2a2a;
@@ -39,19 +39,57 @@
             color: #ede9fe;
             transform: scale(1.05);
         }
-        main {
-            padding: 80px 20px;
+        .game-tabs {
             display: flex;
-            flex-wrap: wrap;
+            justify-content: center;
+            background-color: #1c1c1c;
+            padding: 10px;
+            position: fixed;
+            top: 44px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+        .game-tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            background-color: #4b4b4b;
+            border-radius: 6px;
+            color: #d8b4fe;
+            margin: 0 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .game-tab:hover {
+            background-color: #6d28d9;
+            color: #f5f5f5;
+        }
+        .game-tab.active {
+            background-color: #5b21b6;
+            color: #f5f5f5;
+        }
+        .game-content {
+            display: none;
+        }
+        .game-content.active {
+            display: block;
+        }
+        main {
+            padding: 100px 20px;
+            display: flex;
             justify-content: center;
             gap: 20px;
+        }
+        .product-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
         }
         .product {
             background-color: #3c3c3c;
             border: 1px solid #5b21b6;
-            padding: 20px;
-            margin: 10px;
-            width: 300px;
+            padding: 30px;
             text-align: center;
             border-radius: 8px;
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
@@ -63,21 +101,23 @@
         }
         .product h2 {
             color: #d8b4fe;
-            margin: 0 0 10px;
-            font-size: 1.5em;
+            margin: 0 0 15px;
+            font-size: 1.8em;
         }
         .product p {
             color: #c4c4c4;
-            margin: 0 0 15px;
+            margin: 0 0 20px;
+            font-size: 1.2em;
         }
         button {
             background-color: #5b21b6;
             color: #f5f5f5;
             border: none;
-            padding: 12px 24px;
+            padding: 14px 28px;
             cursor: pointer;
             border-radius: 6px;
             font-weight: 500;
+            font-size: 1em;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
         button:hover {
@@ -223,9 +263,8 @@
             margin: 20px 20px 40px;
         }
         @media (max-width: 600px) {
-            .product {
-                width: 100%;
-                max-width: 400px;
+            .product-container {
+                grid-template-columns: 1fr;
             }
             .modal-content {
                 width: 90%;
@@ -241,16 +280,43 @@
     <header>
         <a href="https://discord.gg/mBNxMKycxR" target="_blank" id="discordLink">Join Discord</a>
     </header>
+    <div class="game-tabs">
+        <div class="game-tab active" onclick="showGameTab('roblox')">Roblox Project Delta</div>
+        <div class="game-tab" onclick="showGameTab('arena')">Arena Breakout Infinite</div>
+    </div>
     <main>
-        <div class="product">
-            <h2>Monthly</h2>
-            <p>$20</p>
-            <button onclick="openModal('Monthly', 20)">Pay Now</button>
+        <div id="roblox" class="game-content active">
+            <div class="product-container">
+                <div class="product">
+                    <h2>Dupe</h2>
+                    <p>$15</p>
+                    <button onclick="openModal('Roblox Dupe', 15)">Pay Now</button>
+                </div>
+                <div class="product">
+                    <h2>Monthly</h2>
+                    <p>$20</p>
+                    <button onclick="openModal('Roblox Monthly', 20)">Pay Now</button>
+                </div>
+                <div class="product">
+                    <h2>Lifetime</h2>
+                    <p>$30</p>
+                    <button onclick="openModal('Roblox Lifetime', 30)">Pay Now</button>
+                </div>
+            </div>
         </div>
-        <div class="product">
-            <h2>Lifetime</h2>
-            <p>$30</p>
-            <button onclick="openModal('Lifetime', 30)">Pay Now</button>
+        <div id="arena" class="game-content">
+            <div class="product-container">
+                <div class="product">
+                    <h2>Monthly</h2>
+                    <p>$20</p>
+                    <button onclick="openModal('Arena Monthly', 20)">Pay Now</button>
+                </div>
+                <div class="product">
+                    <h2>Lifetime</h2>
+                    <p>$30</p>
+                    <button onclick="openModal('Arena Lifetime', 30)">Pay Now</button>
+                </div>
+            </div>
         </div>
     </main>
     <div id="modal">
@@ -292,7 +358,7 @@
         // Implementation Notes:
         // - Discord invite URL: Update 'discordUrl' below.
         // - Addresses: Update 'addresses' object. Each currency should have an array of addresses (one per month).
-        // - Product prices: Update 'monthlyPrice' and 'lifetimePrice'.
+        // - Product prices: Update 'dupePrice', 'monthlyPrice', and 'lifetimePrice'.
         // - Gift card recipient email: Update 'giftEmail'.
         // - Monthly address selection: idx = new Date().getMonth() % addresses[currency].length;
 
@@ -302,12 +368,20 @@
             ethereum: ['0xdaB1b433BD3AeB1ADbAA5724B9cC05EAf047be46'],
             litecoin: ['Lb5718yTJaK1wPkMd33USucPyN13kMtrGY']
         };
+        const dupePrice = 15;
         const monthlyPrice = 20;
         const lifetimePrice = 30;
         const giftEmail = 'jjhjg004@gmail.com';
 
         document.getElementById('discordLink').href = discordUrl;
         document.getElementById('giftEmailSpan').textContent = giftEmail;
+
+        function showGameTab(tab) {
+            document.querySelectorAll('.game-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.game-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.game-tab[onclick="showGameTab('${tab}')"]`).classList.add('active');
+            document.getElementById(tab).classList.add('active');
+        }
 
         function openModal(product, price) {
             document.getElementById('productTitle').textContent = product + ' Payment';
@@ -366,6 +440,8 @@
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
                 showToast('Address copied to clipboard');
+            }).catch(() => {
+                showToast('Failed to copy address');
             });
         }
 
