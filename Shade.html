@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Delta Shop</title>
+    <style>
+        body {
+            background-color: #2a2a2a;
+            color: #e0e0e0;
+            font-family: 'Inter', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #1c1c1c;
+            padding: 12px;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+        }
+        header:hover {
+            background-color: #2e1a47;
+        }
+        header a {
+            color: #c4b5fd;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        header a:hover {
+            color: #ede9fe;
+            transform: scale(1.05);
+        }
+        main {
+            padding: 80px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .product {
+            background-color: #3c3c3c;
+            border: 1px solid #5b21b6;
+            padding: 20px;
+            margin: 10px;
+            width: 300px;
+            text-align: center;
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+            border-color: #a78bfa;
+        }
+        .product h2 {
+            color: #d8b4fe;
+            margin: 0 0 10px;
+            font-size: 1.5em;
+        }
+        .product p {
+            color: #c4c4c4;
+            margin: 0 0 15px;
+        }
+        button {
+            background-color: #5b21b6;
+            color: #f5f5f5;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            background-color: #7c3aed;
+            transform: scale(1.05);
+        }
+        button:disabled {
+            background-color: #4b4b4b;
+            cursor: not-allowed;
+        }
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            overflow-y: auto;
+        }
+        .modal-content {
+            background-color: #3c3c3c;
+            padding: 24px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            border: 1px solid #5b21b6;
+            transition: transform 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-content:hover {
+            transform: scale(1.02);
+        }
+        .close {
+            position: sticky;
+            top: 12px;
+            right: 12px;
+            color: #c4b5fd;
+            font-size: 28px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            z-index: 1000;
+            float: right;
+        }
+        .close:hover {
+            color: #ede9fe;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            background-color: #4b4b4b;
+            border-radius: 6px 6px 0 0;
+            color: #d8b4fe;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .tab:hover {
+            background-color: #6d28d9;
+            color: #f5f5f5;
+        }
+        .tab.active {
+            background-color: #5b21b6;
+            color: #f5f5f5;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .crypto-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #2e2e2e;
+            border-radius: 6px;
+        }
+        .crypto-item h4 {
+            color: #d8b4fe;
+            margin: 0 0 8px;
+            font-size: 1.2em;
+        }
+        .crypto-item p {
+            word-break: break-all;
+            color: #c4c4c4;
+            margin: 0 0 8px;
+            font-size: 0.9em;
+        }
+        .qr-container {
+            margin: 8px 0;
+            background-color: #2a2a2a;
+            padding: 8px;
+            border-radius: 6px;
+            display: inline-block;
+            width: 120px;
+            height: 120px;
+        }
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #6d28d9;
+            color: #f5f5f5;
+            padding: 12px 24px;
+            border-radius: 6px;
+            display: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        #confirmation {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #3c3c3c;
+            padding: 24px;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 1001;
+            border: 1px solid #5b21b6;
+        }
+        #confirmation a {
+            color: #c4b5fd;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        #confirmation a:hover {
+            color: #ede9fe;
+        }
+        .disclaimer {
+            font-size: 0.8em;
+            color: #a3a3a3;
+            text-align: center;
+            margin: 20px 20px 40px;
+        }
+        @media (max-width: 600px) {
+            .product {
+                width: 100%;
+                max-width: 400px;
+            }
+            .modal-content {
+                width: 90%;
+            }
+            .qr-container {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="https://discord.gg/mBNxMKycxR" target="_blank" id="discordLink">Join Discord</a>
+    </header>
+    <main>
+        <div class="product">
+            <h2>Monthly</h2>
+            <p>$20</p>
+            <button onclick="openModal('Monthly', 20)">Pay Now</button>
+        </div>
+        <div class="product">
+            <h2>Lifetime</h2>
+            <p>$30</p>
+            <button onclick="openModal('Lifetime', 30)">Pay Now</button>
+        </div>
+    </main>
+    <div id="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="productTitle"></h2>
+            <p id="productPrice"></p>
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('crypto')">Crypto</div>
+                <div class="tab" onclick="showTab('gift')">Gift Card</div>
+            </div>
+            <div id="crypto" class="tab-content active">
+                <p>Address for <span id="monthYear"></span></p>
+                <div id="cryptoAddresses"></div>
+            </div>
+            <div id="gift" class="tab-content">
+                <p>Buy this gift card — make sure it is the desired amount — and gift it to <span id="giftEmailSpan"></span>.</p>
+                <p>If you are buying with g2g.com: buy the gift card yourself, then make a ticket in the Discord and send the code in the ticket.</p>
+                <p>Required amount: <span id="requiredAmount"></span></p>
+                <label>
+                    <input type="checkbox" id="confirmCheckbox">
+                    I confirm the gift card amount matches the product price
+                </label>
+                <button id="giftConfirm" disabled onclick="confirmPayment()">I've Sent Gift Card</button>
+            </div>
+        </div>
+    </div>
+    <div id="confirmation">
+        <h3>Payment Confirmed</h3>
+        <p>Next steps: Join our Discord to receive your product and support.</p>
+        <a href="https://discord.gg/mBNxMKycxR" target="_blank">Go to Discord</a>
+        <button onclick="closeConfirmation()">Close</button>
+    </div>
+    <div id="toast"></div>
+    <p class="disclaimer">This page is client-side only. Payments are final. Do not share private keys. We are not responsible for mistakes.</p>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        // Implementation Notes:
+        // - Discord invite URL: Update 'discordUrl' below.
+        // - Addresses: Update 'addresses' object. Each currency should have an array of addresses (one per month).
+        // - Product prices: Update 'monthlyPrice' and 'lifetimePrice'.
+        // - Gift card recipient email: Update 'giftEmail'.
+        // - Monthly address selection: idx = new Date().getMonth() % addresses[currency].length;
+
+        const discordUrl = 'https://discord.gg/mBNxMKycxR';
+        const addresses = {
+            bitcoin: ['bc1q7urjtd2naxmajcvylmmz5clqyc3mfmvauw9kmt'],
+            ethereum: ['0xdaB1b433BD3AeB1ADbAA5724B9cC05EAf047be46'],
+            litecoin: ['Lb5718yTJaK1wPkMd33USucPyN13kMtrGY']
+        };
+        const monthlyPrice = 20;
+        const lifetimePrice = 30;
+        const giftEmail = 'jjhjg004@gmail.com';
+
+        document.getElementById('discordLink').href = discordUrl;
+        document.getElementById('giftEmailSpan').textContent = giftEmail;
+
+        function openModal(product, price) {
+            document.getElementById('productTitle').textContent = product + ' Payment';
+            document.getElementById('productPrice').textContent = '$' + price;
+            document.getElementById('requiredAmount').textContent = '$' + price;
+            document.getElementById('modal').style.display = 'flex';
+            showTab('crypto');
+            loadCryptoAddresses();
+            document.getElementById('confirmCheckbox').checked = false;
+            document.getElementById('giftConfirm').disabled = true;
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.tab[onclick="showTab('${tab}')"]`).classList.add('active');
+            document.getElementById(tab).classList.add('active');
+        }
+
+        function loadCryptoAddresses() {
+            const now = new Date();
+            const month = now.toLocaleString('default', { month: 'long' });
+            const year = now.getFullYear();
+            document.getElementById('monthYear').textContent = month + ' ' + year;
+
+            const container = document.getElementById('cryptoAddresses');
+            container.innerHTML = '';
+            Object.keys(addresses).forEach(currency => {
+                const idx = now.getMonth() % addresses[currency].length;
+                const addr = addresses[currency][idx];
+                const div = document.createElement('div');
+                div.classList.add('crypto-item');
+                div.innerHTML = `<h4>${currency.charAt(0).toUpperCase() + currency.slice(1)}</h4>
+                                 <p>${addr}</p>
+                                 <div class="qr-container" id="qr-${currency}"></div>
+                                 <button onclick="copyToClipboard('${addr}')">Copy Address</button>`;
+                container.appendChild(div);
+                new QRCode(document.getElementById(`qr-${currency}`), {
+                    text: addr,
+                    width: 120,
+                    height: 120,
+                    colorDark: "#e0e0e0",
+                    colorLight: "#2a2a2a"
+                });
+            });
+            const cryptoConfirm = document.createElement('button');
+            cryptoConfirm.textContent = 'I Paid via Crypto';
+            cryptoConfirm.onclick = confirmPayment;
+            container.appendChild(cryptoConfirm);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Address copied to clipboard');
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        function confirmPayment() {
+            closeModal();
+            document.getElementById('confirmation').style.display = 'block';
+            document.querySelector('#confirmation a').href = discordUrl;
+        }
+
+        function closeConfirmation() {
+            document.getElementById('confirmation').style.display = 'none';
+        }
+
+        document.getElementById('confirmCheckbox').addEventListener('change', function() {
+            document.getElementById('giftConfirm').disabled = !this.checked;
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('modal').style.display === 'flex') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
